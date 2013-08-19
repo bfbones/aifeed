@@ -1,0 +1,90 @@
+body {
+  /*width: 1000px;*/
+  width: 100%;
+  min-width: 1000px;
+  padding: 0;
+  margin: 0 auto;
+}
+body > header h1 {
+  background-color: #222;
+  padding: 10px;
+  margin: 0 auto;
+}
+body > header h1 a {
+  color: #ddd;
+  text-decoration: none;
+}
+aside nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+aside a {
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+aside nav ul li {
+  padding: 2px;
+}
+aside nav ul li:nth-child(odd) {
+  background-color: #cdc;
+}
+aside nav ul li:nth-child(even) {
+  background-color: #bdb;
+}
+aside {
+  float: left;
+  padding: 0;
+  margin: 0 10px;
+  width: 20%;
+}
+main {
+  width: 75%;
+  float: left;
+  margin: 0 10px;
+}
+main h2 {
+ padding-left: 20px;
+} 
+main h2 a {
+ color: #333;
+}
+article {
+  background: #ccc;
+  padding: 10px 20px;
+  margin: 10px auto;
+}
+article header p {
+  font-size: 0.7em;
+}
+article header p a {
+  margin-left: 20px;
+}
+section header h2 {
+  display: inline-block;
+}
+input:disabled {
+  color: #555;
+}
+a {
+  color: #050;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+div.nav {
+  width: 100%;
+  display: inline-block;
+  margin:2px;
+  float: none;
+}
+.right {
+  float: right;
+  display: inline-block;
+}
+.center {
+  float: center;
+  display: inline-block;
+}
