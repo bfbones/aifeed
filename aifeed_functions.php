@@ -420,7 +420,7 @@ function update_feed($feed, $xml)
 
   }
 
-  print($feed['url']."<br>\n");
+  #print($feed['url']."<br>\n");
 
   $feed_update_string = "UPDATE {$db_table_feeds} Set
     feed_link = '".mysql_real_escape_string($feed['link'])."',
