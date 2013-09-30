@@ -494,7 +494,8 @@ function show_items($feed_id = '', $item_no = NULL)
     $item_count = (db_query($item_count_query));
   }
 
-  $item_count = mysql_fetch_row($item_count)[0];
+  $item_count = mysql_fetch_row($item_count);
+  $item_count = $item_count[0];
   $page_max = ($item_count / $item_no);
 
   $item_sqlquery = db_query($item_query_string);
