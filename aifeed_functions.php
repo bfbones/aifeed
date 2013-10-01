@@ -79,9 +79,11 @@ function create_tables() {
     item_pubDate int(11) unsigned NOT NULL,
     item_creator varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     item_desc text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    item_seen tinyint(1) NOT NULL DEFAULT '0',
     item_content longtext CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY item_guid (item_guid) ) ENGINE=MyISAM  DEFAULT CHARSET=utf8");
+    UNIQUE KEY item_guid (item_guid)
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=230");
 }
 
 function db_query($query_string)
