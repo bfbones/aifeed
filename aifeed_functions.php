@@ -195,8 +195,8 @@ function item_update($feed)
 
       $item_insert_string = sprintf("
         INSERT INTO %s
-        (item_guid, item_link, item_title, item_pubDate, item_desc, item_content)
-        VALUES ('%s', '%s', '%s', '%s', '%s', '%s')",
+        (item_guid, item_link, item_title, item_pubDate, item_desc, item_seen, item_content)
+        VALUES ('%s', '%s', '%s', '%s', '%s', 0, '%s')",
           $db_table_items,
           $guid,
           $link,
@@ -453,7 +453,7 @@ function show_items($feed_id = '', $item_no = NULL)
     $heading = "<a href=\"{$row->feed_link}\">{$row->feed_title}</a>";
     $item_no = $row->feed_item_no > 0 ? $row->feed_item_no : $item_no;
 
-    $item_query_string = "SELECT A.item_link, A.item_title, A.item_pubDate, A.item_content
+    $item_query_string = "SELECT A.*
       FROM {$db_table_items} AS A JOIN {$db_table_feed_item} AS B
       ON B.item_id = A.id
       WHERE '{$feed_id_esc}' = B.feed_id 
@@ -493,26 +493,36 @@ function show_items($feed_id = '', $item_no = NULL)
       WHERE C.feed_list = 1";
     $item_count = (db_query($item_count_query));
   }
-
   $item_count = mysql_fetch_row($item_count);
   $item_count = $item_count[0];
   $page_max = ($item_count / $item_no);
 
   $item_sqlquery = db_query($item_query_string);
 
-  print("<h2>{$heading}</h2>\n");
   print_pagination($page, $page_max, $feed_id_link_string);
 
   while($row = mysql_fetch_assoc($item_sqlquery))
   {
-    print("<article>\n<header>\n<h3>
-      <a href=\"{$row['item_link']}\">{$row['item_title']}</a></h3>
-      <p>".strftime("%a, %x - %R", $row['item_pubDate'])."
-      <a href=\"{$row['feed_link']}\">{$row['feed_title']}</a>");
+    if($row['item_seen'] == 0) {
+	    print("<article>\n<header>\n<h3>
+	      <a href=\"{$row['item_link']}\">{$row['item_title']}</a></h3>
+	      <p>".strftime("%a, %x - %R", $row['item_pubDate'])."
+	      <a href=\"{$row['feed_link']}\">{$row['feed_title']}</a>");
+    } else {
+            print("<article>\n<header>\n<h3>
+              <a href=\"{$row['item_link']}\" style=\"color: #333;\">{$row['item_title']}</a></h3>
+              <p>".strftime("%a, %x - %R", $row['item_pubDate'])."
+              <a href=\"{$row['feed_link']}\">{$row['feed_title']}</a>");
+    }
 
     print("</p>\n</header>
     {$row['item_content']}
     </article>\n");
+     if($feed_id != '')
+     {
+    	$item_seen_query = 'UPDATE  itemlist SET item_seen=1 WHERE id ='.$row['id'].';';
+    	db_query($item_seen_query);
+     }
   }
   print_pagination($page, $page_max, $feed_id_link_string);
 }
@@ -547,6 +557,24 @@ function get_feed_list()
   return db_query($feed_query_string);
 }
 
+function get_unseen_count($feed_id)
+{
+	global $db_table_feeds;
+
+	$item_query_string = "SELECT COUNT(*)
+      FROM itemlist AS A JOIN feed_item_list AS B
+      ON B.item_id = A.id WHERE B.feed_id=".$feed_id." AND item_seen=0";
+	$item_count = db_query($item_query_string);
+	$item_count = mysql_fetch_row($item_count);
+	$item_count = $item_count[0];;
+	if($item_count != 0) {
+		$item_count = '&nbsp;<span style="color: #D63030; font-size: 11px; vertical-align: super;">'.$item_count."</span>";
+	} else {
+		$item_count = "";
+	}
+	return $item_count;
+}
+
 function show_feeds()
 {
   print("<ul>\n");
@@ -554,7 +582,7 @@ function show_feeds()
   $sqlquery = get_feed_list();
   while($row = mysql_fetch_assoc($sqlquery))
   {
-    print("<li><a href=\"./?feed_id={$row['feed_id']}\">{$row['feed_title']}</a></li>\n");
+    print("<li><a href=\"./?feed_id={$row['feed_id']}\">{$row['feed_title']}</a>".get_unseen_count($row['feed_id'])."</li>\n");
   }
   print("</ul>\n");
 }
