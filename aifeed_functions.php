@@ -381,17 +381,26 @@ function feed_update()
         'type'  => $row->feed_type,
         'url'   => $row->feed_url
       );
-    if(url_exists($feed['url']))
-    {
-      $xml = get_xml_contents($feed['url']);
+    for($i = 1; $i <= 3; $i++) {
+      if(url_exists($feed['url']))
+      {
+        $xml = get_xml_contents($feed['url']);
+	$f = 0;
+	break;
+      }
+      else
+      {
+        if($i == 3) {
+	  echo "URL \"".$feed['url']."\" konnte nicht geladen werden.<br />\n";
+	  $f = 1;
+	} else  {
+	  sleep(3);
+	}
+      }
     }
-    else
-    {
-      echo "URL \"".$feed['url']."\" konnte nicht geladen werden.<br />\n";
-      continue;
+    if($f != 1) {
+      update_feed($feed, $xml);
     }
-
-    update_feed($feed, $xml);
   }
 }
 
