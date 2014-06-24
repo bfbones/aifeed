@@ -1,7 +1,5 @@
 <?php
-
 include 'aifeed_globals.php';
-
 function filecheck($file)
 {
   if(($file['type'] != 'text/x-opml+xml') or ($file['size'] > 65536))
@@ -134,9 +132,18 @@ function url_exists($url)
 
 function get_xml_contents($url)
 {
+  // load data via curl 
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)");
+  curl_setopt($ch, CURLOPT_HEADER, 0);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+  $output = curl_exec($ch);
+
   // catch errors ourself
   libxml_use_internal_errors(true);
-  $xml = simplexml_load_string(file_get_contents($url));
+  $xml = simplexml_load_string($output);
   if(!$xml) {
     if($debug)
     {
@@ -243,9 +250,8 @@ function feed_create($feed_url, $feed_list)
     'url' => $feed_url,
     'list' => $feed_list
   );
-
     if(url_exists($feed['url']))
-    {
+    {	
       $xml = get_xml_contents($feed['url']);
       if(!$xml)
         return 5;
